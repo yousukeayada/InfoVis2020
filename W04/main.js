@@ -232,16 +232,25 @@ function main2()
         var x_NDC = 2 * (x_win - vx) / vw - 1;
         var y_NDC = - (2 * (y_win - vy) / vh - 1);
         var p_NDC = new THREE.Vector3(x_NDC,y_NDC,1);
-        console.log(p_NDC.getComponent(0));
+        // console.log(p_NDC.getComponent(0));
         var p_wld = p_NDC.unproject(camera);
 
         var origin = camera.position;
         var direction = p_wld.sub(camera.position).normalize();
         var raycaster = new THREE.Raycaster(origin,direction);
-        console.log(direction.getComponent(2));
+        // console.log(direction.getComponent(2));
         var intersects = raycaster.intersectObject(cube);
         if(intersects.length > 0){
-            intersects[0].face.color.setRGB(0,0,1);
+            // intersects[0].face.color.setRGB(0,0,1);
+            var color = intersects[0].face.color;
+            console.log(color.r+" "+color.g+" "+color.b);
+            if(color.r == 1){
+                color.setRGB(0,1,0);
+            }else if(color.g == 1){
+                color.setRGB(0,0,1);
+            }else if(color.b == 1){
+                color.setRGB(1,0,0);
+            }
             intersects[0].object.geometry.colorsNeedUpdate = true;
         }
     }
