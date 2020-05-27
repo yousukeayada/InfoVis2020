@@ -1,0 +1,35 @@
+<html>
+    <head>
+	<title>W05 task5</title>
+    </head>
+    <body>
+	<script src="https://threejs.org/build/three.min.js"></script>
+    <script src="main.js"></script>
+
+    <p>Toon</p>
+    <script type="x-shader/x-vertex" id="toon.vert">
+        varying vec2 vUv;
+
+        void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+        }
+	</script>
+
+    <script type="x-shader/x-fragment" id="toon.frag">
+        precision mediump float;
+        varying vec2 vUv;
+        uniform sampler2D uTex;
+
+        void main(){
+        gl_FragColor = texture2D(uTex, vUv); 
+        }
+    </script>
+
+    <script>
+        test();
+    </script>
+
+	
+    </body>
+</html>
