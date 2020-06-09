@@ -318,9 +318,9 @@ function Isosurfaces2( volume, isovalue )
                     var v5 = new THREE.Vector3( x + vid5[0], y + vid5[1], z + vid5[2] );
 
                     // 三角形の各頂点の座標
-                    var v01 = interpolated_vertex( indices, eid0, v0, v1, isovalue );
-                    var v23 = interpolated_vertex( indices, eid1, v2, v3, isovalue );
-                    var v45 = interpolated_vertex( indices, eid2, v4, v5, isovalue );
+                    var v01 = interpolated_vertex( v0, v1, isovalue );
+                    var v23 = interpolated_vertex( v2, v3, isovalue );
+                    var v45 = interpolated_vertex( v4, v5, isovalue );
 
                     geometry.vertices.push( v01 );
                     geometry.vertices.push( v23 );
@@ -417,78 +417,27 @@ function Isosurfaces2( volume, isovalue )
         return index;
     }
 
-    function interpolated_vertex( indices, eid, v0, v1, s )
+    function interpolated_vertex( v0, v1, s )
     {
-        var s0,s1;
-        var vsub = new THREE.Vector3().subVectors(v1, v0);
-        
-        if(eid==0){
-            s0 = volume.values[ indices[0] ][0];
-            s1 = volume.values[ indices[3] ][0];
-        }else if(eid==1){
-            s0 = volume.values[ indices[3] ][0];
-            s1 = volume.values[ indices[7] ][0];
-        }else if(eid==2){
-            s0 = volume.values[ indices[7] ][0];
-            s1 = volume.values[ indices[4] ][0];
-        }else if(eid==3){
-            s0 = volume.values[ indices[4] ][0];
-            s1 = volume.values[ indices[0] ][0];
-        }else if(eid==4){
-            s0 = volume.values[ indices[1] ][0];
-            s1 = volume.values[ indices[2] ][0];
-        }else if(eid==5){
-            s0 = volume.values[ indices[2] ][0];
-            s1 = volume.values[ indices[6] ][0];
-        }else if(eid==6){
-            s0 = volume.values[ indices[6] ][0];
-            s1 = volume.values[ indices[5] ][0];
-        }else if(eid==7){
-            s0 = volume.values[ indices[5] ][0];
-            s1 = volume.values[ indices[1] ][0];
-        }else if(eid==8){
-            s0 = volume.values[ indices[0] ][0];
-            s1 = volume.values[ indices[1] ][0];
-        }else if(eid==9){
-            s0 = volume.values[ indices[3] ][0];
-            s1 = volume.values[ indices[2] ][0];
-        }else if(eid==10){
-            s0 = volume.values[ indices[7] ][0];
-            s1 = volume.values[ indices[6] ][0];
-        }else if(eid==11){
-            s0 = volume.values[ indices[4] ][0];
-            s1 = volume.values[ indices[5] ][0];
+        var id0 = index_of( v0.x, v0.y, v0.z );
+        var id1 = index_of( v1.x, v1.y, v1.z );
+
+        var s0 = volume.values[id0];
+        var s1 = volume.values[id1];
+
+        var a = ( s - s0 ) / ( s1 - s0 );
+        var x = KVS.Mix( v0.x, v1.x, a );
+        var y = KVS.Mix( v0.y, v1.y, a );
+        var z = KVS.Mix( v0.z, v1.z, a );
+
+        return new THREE.Vector3( x, y, z );
+
+        function index_of( x, y, z )
+        {
+            var lines = volume.resolution.x;
+            var slices = volume.resolution.x * volume.resolution.y;
+            return x + y * lines + z * slices;
         }
-        var si = [];
-        si.push(volume.values[ indices[0] ][0]);
-        si.push(volume.values[ indices[1] ][0]);
-        si.push(volume.values[ indices[2] ][0]);
-        si.push(volume.values[ indices[3] ][0]);
-        si.push(volume.values[ indices[4] ][0]);
-        si.push(volume.values[ indices[5] ][0]);
-        si.push(volume.values[ indices[6] ][0]);
-        si.push(volume.values[ indices[7] ][0]);
-        
-        if(count%10000==0){
-            // console.log(indices);
-            console.log(eid);
-            console.log(s0+" "+s1);
-            console.log(si);
-            // console.log(vsub);
-            // console.log(v0);
-            // console.log(v1);
-            // console.log(result);
-        }
-        s0=100;s1=200;
-        var result = new THREE.Vector3().subVectors(v1, v0).multiplyScalar(s);
-        // if(count%10000==0)console.log(result);
-        result = result.sub(v1.multiplyScalar(s0)).sub(v0.multiplyScalar(s1));
-        result = result.divideScalar(s1-s0);
-        if(count%10000==0){
-            // console.log(result);
-        }
-        count++;
-        return result;
     }
 }
 
@@ -653,6 +602,24 @@ function Isosurfaces3( volume, isovalue, light )
 
     function interpolated_vertex( v0, v1, s )
     {
-        return new THREE.Vector3().addVectors( v0, v1 ).divideScalar( 2 );
+        var id0 = index_of( v0.x, v0.y, v0.z );
+        var id1 = index_of( v1.x, v1.y, v1.z );
+
+        var s0 = volume.values[id0];
+        var s1 = volume.values[id1];
+
+        var a = ( s - s0 ) / ( s1 - s0 );
+        var x = KVS.Mix( v0.x, v1.x, a );
+        var y = KVS.Mix( v0.y, v1.y, a );
+        var z = KVS.Mix( v0.z, v1.z, a );
+
+        return new THREE.Vector3( x, y, z );
+
+        function index_of( x, y, z )
+        {
+            var lines = volume.resolution.x;
+            var slices = volume.resolution.x * volume.resolution.y;
+            return x + y * lines + z * slices;
+        }
     }
 }
