@@ -32,3 +32,9 @@
 ## W10
 - https://yousukeayada.github.io/InfoVis2020/W10/task1.html
 - https://yousukeayada.github.io/InfoVis2020/W10/task2.html
+
+## W12
+- https://yousukeayada.github.io/InfoVis2020/W12/task1.html
+
+## Final
+- https://yousukeayada.github.io/InfoVis2020/Final/task.html
